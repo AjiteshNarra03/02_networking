@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Creates a cross account role to allow the requester to send vpc peering request
+
+Parameters:
+  Environment:
+    Type: String
+  PeerRequesterAccountId:
+    Type: String
+  RoleName:
+    Type: String
+
+Resources:
+  Role:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Join ['-', [!Ref RoleName, !Ref Environment]]
+      AssumeRolePolicyDocument:
+        Statement:
+          - Principal:
+              AWS: !Ref PeerRequesterAccountId
+            Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'ec2:AcceptVpcPeeringConnection'
+                Resource: '*'
+
+Outputs:
+  Name:
+    Value: !Ref Role
+  Arn:
+    Value: !GetAtt Role.Arn

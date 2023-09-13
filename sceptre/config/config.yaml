@@ -1,0 +1,9 @@
+project_code: bce
+region: ap-south-1
+AvailabilityZoneA: ap-south-1a
+AvailabilityZoneB: ap-south-1b
+Environment: test
+CreatedBy: narra.ajit@bizcloudexperts.com
+Application: Training
+# BizMasterAccountId: "332753493246"
+# BizDevAccountId: 083868342691

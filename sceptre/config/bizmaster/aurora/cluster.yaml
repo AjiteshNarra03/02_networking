@@ -1,0 +1,17 @@
+template_path: rds/aurora.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  AvailabilityZoneA: {{ stack_group_config.AvailabilityZoneA }}
+  AvailabilityZoneB: {{ stack_group_config.AvailabilityZoneB }}
+  DatabaseName: 'training'
+  AuroraClusterName: 'bce-training-aurora-cluster'
+  PrivateSubnetAId: !stack_output bizmaster/vpc/private-subnet-a.yaml::Id
+  PrivateSubnetBId: !stack_output bizmaster/vpc/private-subnet-b.yaml::Id
+  SecurityGroupId: !stack_output bizmaster/aurora/security-group.yaml::Id
+  BastionSecurityGroupId: !stack_output bizmaster/bastion/security-group.yaml::Id
+  LambdaSecurityGroupId: !stack_output bizmaster/lambda/security-group.yaml::Id
+  # VpcId: !stack_output bizmaster/vpc/vpc.yaml::Id
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

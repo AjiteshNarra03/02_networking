@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Creates a VPC Internet Gateway
+
+Parameters:
+  Environment:
+    Type: String
+  SecurityGroupName:
+    Type: String
+  VpcId:
+    Type: String
+
+Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupName: !Join ['-', [!Ref SecurityGroupName, !Ref Environment]]
+      GroupDescription: !Join ['-', [!Ref SecurityGroupName, !Ref Environment]]
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref SecurityGroupName, !Ref Environment]]
+      VpcId: !Ref VpcId
+
+Outputs:
+  Id:
+    Value: !Ref SecurityGroup

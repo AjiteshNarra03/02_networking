@@ -1,0 +1,10 @@
+template_path: vpc/route.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  DestinationCidrBlock: '0.0.0.0/0'
+  InternetGatewayId: !stack_output bizdev/vpc/internet-gateway.yaml::Id
+  RouteTableId: !stack_output bizdev/vpc/route-table-public-subnets.yaml::Id
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

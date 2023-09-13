@@ -1,0 +1,12 @@
+template_path: vpc/subnet.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  SubnetName: 'bce-training-ajit-lambda-subnet-a'
+  CidrBlock: 10.222.8.0/23
+  AvailabilityZone: {{ stack_group_config.AvailabilityZoneA }}
+  VpcId: !stack_output bizmaster/vpc/vpc.yaml::Id
+  RouteTableId: !stack_output bizmaster/vpc/route-table-private-subnets.yaml::Id
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

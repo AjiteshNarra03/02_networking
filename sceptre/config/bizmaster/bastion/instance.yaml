@@ -1,0 +1,13 @@
+template_path: ec2/instance.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  InstanceName: 'bce-training-bastion'
+  KeyName: 'bce-training-ec2-key'
+  SecurityGroupId: !stack_output bizmaster/bastion/security-group.yaml::Id
+  SubnetId: !stack_output bizmaster/vpc/public-subnet-a.yaml::Id
+  CidrIpForSshAccess: '47.188.198.166/32'
+  VpcPeerCidrForSshAccess: '10.20.0.0/16'
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

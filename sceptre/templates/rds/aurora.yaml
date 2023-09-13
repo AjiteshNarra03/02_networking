@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Creates an RDS Aurora database
+
+Parameters:
+  Environment:
+    Type: String
+  AvailabilityZoneA:
+    Type: String
+  AvailabilityZoneB:
+    Type: String
+  DatabaseName:
+    Type: String
+  AuroraClusterName:
+    Type: String
+  DBClusterInstanceClass:
+    Type: String
+    Default: "db.t3.medium"
+  Engine: 
+    Type: String
+    Default: "aurora-mysql"
+  PrivateSubnetAId:
+    Type: String
+  PrivateSubnetBId:
+    Type: String
+  SecurityGroupId:
+    Type: String
+  BastionSecurityGroupId:
+    Type: String
+  LambdaSecurityGroupId:
+    Type: String
+  MasterUsername: 
+    Type: String
+    Default: "admin"
+  MasterUserPassword: 
+    Type: String
+    Default: "Password123"
+
+Resources:
+  ClusterParameterGroup:
+    Type: AWS::RDS::DBClusterParameterGroup
+    Properties: 
+      DBClusterParameterGroupName: !Join ['-', [!Ref AuroraClusterName, 'parameter-grp', !Ref Environment]]
+      Description: !Join ['-', [!Ref AuroraClusterName, 'parameter-group', !Ref Environment]]
+      Family: aurora-mysql8.0
+      Parameters:
+        time_zone: "US/Central"
+        character_set_database: "utf32"
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref AuroraClusterName, 'parameter-group', !Ref Environment]]
+  
+  InstanceParameterGroup: 
+    Type: 'AWS::RDS::DBParameterGroup'
+    Properties:
+      DBParameterGroupName: !Join ['-', [!Ref AuroraClusterName, 'instance-parameter-grp', !Ref Environment]]
+      Description: !Join ['-', [!Ref AuroraClusterName, 'instance-parameter-group', !Ref Environment]]
+      Family: aurora-mysql8.0
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref AuroraClusterName, 'instance-parameter-group', !Ref Environment]]
+  
+  DbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Join ['-', [!Ref AuroraClusterName, 'db-subnet-group', !Ref Environment]]
+      DBSubnetGroupDescription: !Join ['-', [!Ref AuroraClusterName, 'db-subnet-group', !Ref Environment]]
+      SubnetIds:
+      - !Ref PrivateSubnetAId
+      - !Ref PrivateSubnetBId
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref AuroraClusterName, 'db-subnet-group', !Ref Environment]]
+  
+  DbSecurityGroupIngressBastion:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: 'access from bastion host'
+      FromPort: 3306
+      ToPort: 3306
+      IpProtocol: tcp
+      SourceSecurityGroupId: !Ref BastionSecurityGroupId
+      GroupId: !Ref SecurityGroupId
+
+  DbSecurityGroupIngressLambda:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: 'access from lambda functions'
+      FromPort: 3306
+      ToPort: 3306
+      IpProtocol: tcp
+      SourceSecurityGroupId: !Ref LambdaSecurityGroupId
+      GroupId: !Ref SecurityGroupId
+
+  Aurora:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      AvailabilityZones:
+        - !Ref AvailabilityZoneA
+        - !Ref AvailabilityZoneB
+      DatabaseName: !Ref DatabaseName
+      DBClusterIdentifier: !Ref AuroraClusterName
+      # DBClusterInstanceClass: !Ref DBClusterInstanceClass 
+      DBClusterParameterGroupName: !Ref ClusterParameterGroup
+      DBInstanceParameterGroupName: !Ref InstanceParameterGroup
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      Engine: !Ref Engine
+      # EngineVersion: !Ref EngineVersion
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
+      VpcSecurityGroupIds:
+      - !Ref SecurityGroupId
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref AuroraClusterName, !Ref Environment]]
+  
+  WriterInstance:
+    Type: AWS::RDS::DBInstance
+    Properties: 
+      DBClusterIdentifier: !Ref Aurora
+      DBInstanceClass: !Ref DBClusterInstanceClass
+      DBInstanceIdentifier: !Join ['-', [!Ref AuroraClusterName, 'instance', !Ref Environment]]
+      DBParameterGroupName: !Ref InstanceParameterGroup
+      Engine: !Ref Engine
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref AuroraClusterName, 'instance', !Ref Environment]]
+  
+  
+Outputs:
+  Name:
+    Value: !Ref Aurora
+  Arn:
+    Value: !GetAtt Aurora.DBClusterArn
+  Endpoint:
+    Value: !GetAtt Aurora.Endpoint.Address
+  ReaderEndpoint:
+    Value: !GetAtt Aurora.ReadEndpoint.Address
+  

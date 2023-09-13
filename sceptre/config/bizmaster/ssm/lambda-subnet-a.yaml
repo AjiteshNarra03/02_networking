@@ -1,0 +1,10 @@
+template_path: ssm/parameter.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  Description: 'bce training lambda subnet a - {{ stack_group_config.Environment }}'
+  ParamName: '/bce/training/{{ stack_group_config.Environment }}/lambda/subnet/a'
+  ParamValue: !stack_output bizmaster/vpc/lambda-subnet-a.yaml::Id
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

@@ -1,0 +1,14 @@
+template_path: iam/vpc-peering-role.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  RoleName: 'bce-dev-training-vpc-peering-role-bizmaster'
+  PeerRequesterAccountId: '332753493246' #{{ stack_group_config.BizMasterAccountId }} 
+hooks:
+  after_create:
+    - !cmd eval $(sceptre --ignore-dependencies list outputs bizdev/iam/bizmaster-peering-role.yaml --export=envvar) && echo $SCEPTRE_Name > peeringRoleName.txt && echo $SCEPTRE_Arn > peeringRoleArn.txt
+  after_update:
+    - !cmd eval $(sceptre --ignore-dependencies list outputs bizdev/iam/bizmaster-peering-role.yaml --export=envvar) && echo $SCEPTRE_Name > peeringRoleName.txt && echo $SCEPTRE_Arn > peeringRoleArn.txt
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

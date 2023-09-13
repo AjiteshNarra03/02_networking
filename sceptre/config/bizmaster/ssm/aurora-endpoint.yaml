@@ -1,0 +1,10 @@
+template_path: ssm/parameter.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  Description: 'bce training aurora endpoint - {{ stack_group_config.Environment }}'
+  ParamName: '/bce/training/{{ stack_group_config.Environment }}/aurora/endpoint'
+  ParamValue: !stack_output bizmaster/aurora/cluster.yaml::Endpoint
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

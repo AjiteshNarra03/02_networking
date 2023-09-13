@@ -1,0 +1,14 @@
+template_path: vpc/route-table.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  RouteTableName: 'bce-training-vpc--ajit-public-route-table'
+  VpcId: !stack_output bizmaster/vpc/vpc.yaml::Id
+hooks:
+  after_create:
+    - !cmd eval $(sceptre --ignore-dependencies list outputs bizmaster/vpc/route-table-public-subnets.yaml --export=envvar) && echo $SCEPTRE_Id > bizMasterPublicRouteTableId.txt
+  after_update:
+    - !cmd eval $(sceptre --ignore-dependencies list outputs bizmaster/vpc/route-table-public-subnets.yaml --export=envvar) && echo $SCEPTRE_Id > bizMasterPublicRouteTableId.txt
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

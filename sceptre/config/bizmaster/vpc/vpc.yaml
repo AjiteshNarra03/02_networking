@@ -1,0 +1,14 @@
+template_path: vpc/vpc.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  VpcName: 'bce-training-vpc-ajit'
+  CidrBlock: 10.222.0.0/16
+hooks:
+  after_create:
+    - !cmd eval $(sceptre --ignore-dependencies list outputs bizmaster/vpc/vpc.yaml --export=envvar) && echo $SCEPTRE_Id > bizmasterVpcId.txt
+  after_update:
+    - !cmd eval $(sceptre --ignore-dependencies list outputs bizmaster/vpc/vpc.yaml --export=envvar) && echo $SCEPTRE_Id > bizmasterVpcId.txt
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

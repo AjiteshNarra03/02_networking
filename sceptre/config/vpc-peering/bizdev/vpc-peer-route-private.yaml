@@ -1,0 +1,10 @@
+template_path: vpc/route.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  DestinationCidrBlock: '10.10.0.0/16'
+  RouteTableId: !file ./bizDevPrivateRouteTableId.txt
+  PeeringConnectionId: !file ./peeringConnectionId.txt
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

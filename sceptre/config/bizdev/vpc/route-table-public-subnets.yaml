@@ -1,0 +1,14 @@
+template_path: vpc/route-table.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  RouteTableName: 'bce-dev-training-vpc-public-route-table'
+  VpcId: !stack_output bizdev/vpc/vpc.yaml::Id
+hooks:
+  after_create:
+    - !cmd eval $(sceptre --ignore-dependencies list outputs bizdev/vpc/route-table-public-subnets.yaml --export=envvar) && echo $SCEPTRE_Id > bizDevPublicRouteTableId.txt
+  after_update:
+    - !cmd eval $(sceptre --ignore-dependencies list outputs bizdev/vpc/route-table-public-subnets.yaml --export=envvar) && echo $SCEPTRE_Id > bizDevPublicRouteTableId.txt
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

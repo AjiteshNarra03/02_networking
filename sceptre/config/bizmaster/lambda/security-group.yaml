@@ -1,0 +1,9 @@
+template_path: vpc/security-group.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  SecurityGroupName: 'bce-training-lambda-sg'
+  VpcId: !stack_output bizmaster/vpc/vpc.yaml::Id
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Creates a VPC Subnet
+
+Parameters:
+  Environment:
+    Type: String
+  SubnetName:
+    Type: String
+  CidrBlock:
+    Type: String
+  AvailabilityZone:
+    Type: String
+  VpcId:
+    Type: String
+  RouteTableId:
+    Type: String
+  MapPublicIpOnLaunch:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "false"
+
+Resources:
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref AvailabilityZone
+      CidrBlock: !Ref CidrBlock
+      MapPublicIpOnLaunch: !Ref MapPublicIpOnLaunch
+      VpcId: !Ref VpcId
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref SubnetName, !Ref Environment]]
+  
+  Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref RouteTableId
+      SubnetId: !Ref Subnet
+
+Outputs:
+  Id:
+    Value: !Ref Subnet

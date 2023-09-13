@@ -1,0 +1,9 @@
+template_path: vpc/security-group.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  SecurityGroupName: 'bce-dev-training-bastion-sg'
+  VpcId: !stack_output bizdev/vpc/vpc.yaml::Id
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

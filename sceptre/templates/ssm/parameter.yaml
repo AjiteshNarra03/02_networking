@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Creates an SSM parameter
+
+Parameters:
+  Environment:
+    Type: String
+  Description:
+    Type: String
+  ParamName:
+    Type: String
+  ParamType:
+    Type: String
+    Default: 'String'
+    AllowedValues: ['String', 'StringList']
+  ParamValue:
+    Type: String
+
+Resources:
+  Parameter:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      Description: !Ref Description
+      Name: !Ref ParamName
+      Type: !Ref ParamType
+      Value: !Ref ParamValue
+
+Outputs:
+  Name:
+    Value: !Ref Parameter

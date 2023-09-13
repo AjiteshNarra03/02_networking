@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Creates an AWS VPC
+
+Parameters:
+  Environment:
+    Type: String
+  VpcName:
+    Type: String
+  CidrBlock:
+    Type: String
+  EnableDnsHostnames:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "true"
+  EnableDnsSupport:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "true"
+
+Resources:
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref CidrBlock
+      EnableDnsHostnames: !Ref EnableDnsHostnames
+      EnableDnsSupport: !Ref EnableDnsSupport
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref VpcName, !Ref Environment]]
+
+Outputs:
+  Id:
+    Value: !Ref Vpc
+  VpcCidrBlock:
+    Value: !GetAtt Vpc.CidrBlock

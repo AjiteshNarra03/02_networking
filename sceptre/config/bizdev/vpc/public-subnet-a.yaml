@@ -1,0 +1,13 @@
+template_path: vpc/subnet.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  SubnetName: 'bce-dev-training-public-subnet-a'
+  CidrBlock: 10.20.1.0/24
+  AvailabilityZone: {{ stack_group_config.AvailabilityZoneA }}
+  VpcId: !stack_output bizdev/vpc/vpc.yaml::Id
+  MapPublicIpOnLaunch: "true"
+  RouteTableId: !stack_output bizdev/vpc/route-table-public-subnets.yaml::Id
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

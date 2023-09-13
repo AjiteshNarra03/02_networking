@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Creates a VPC Internet Gateway
+
+Parameters:
+  Environment:
+    Type: String
+  InternetGatewayName:
+    Type: String
+  VpcId:
+    Type: String
+
+Resources:
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties: 
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref InternetGatewayName, !Ref Environment]]
+  
+  VpcAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties: 
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VpcId
+
+Outputs:
+  Id:
+    Value: !Ref InternetGateway

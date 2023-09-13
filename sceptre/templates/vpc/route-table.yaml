@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Creates a VPC Route Table
+
+Parameters:
+  Environment:
+    Type: String
+  RouteTableName:
+    Type: String
+  VpcId:
+    Type: String
+
+Resources:
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      VpcId: !Ref VpcId
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref RouteTableName, !Ref Environment]]
+
+Outputs:
+  Id:
+    Value: !Ref RouteTable

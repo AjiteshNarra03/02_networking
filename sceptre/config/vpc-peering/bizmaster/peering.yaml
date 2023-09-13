@@ -1,0 +1,17 @@
+template_path: vpc/peering.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  PeeringConnectionName: 'bce-training-vpc-peering-with-bizdev'
+  PeerAccountId: {{ stack_group_config.BizDevAccountId }}
+  PeerRoleArn: !file ./peeringRoleArn.txt
+  PeerVpcId: !file ./bizdevVpcId.txt
+  VpcId: !file ./bizmasterVpcId.txt
+hooks:
+  after_update: 
+  - !cmd eval $(sceptre --ignore-dependencies list outputs vpc-peering/bizmaster/peering.yaml --export=envvar) && echo $SCEPTRE_Id > peeringConnectionId.txt
+  after_create: 
+  - !cmd eval $(sceptre --ignore-dependencies list outputs vpc-peering/bizmaster/peering.yaml --export=envvar) && echo $SCEPTRE_Id > peeringConnectionId.txt
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

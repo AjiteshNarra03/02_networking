@@ -1,0 +1,9 @@
+template_path: vpc/internet-gateway.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  InternetGatewayName: 'bce-dev-training-vpc-internet-gateway'
+  VpcId: !stack_output bizdev/vpc/vpc.yaml::Id
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

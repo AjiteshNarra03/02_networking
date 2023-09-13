@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Creates an EC2 instance 
+
+Parameters:
+  Environment:
+    Type: String
+  InstanceName:
+    Type: String
+  ImageId:
+    Type: String
+    Default: "ami-06f621d90fa29f6d0" #linux ami id
+  KeyName:
+    Type: String
+  SecurityGroupId:
+    Type: String
+  SubnetId:
+    Type: String
+  InstanceType:
+    Type: String
+    Default: t3.small
+  CidrIpForSshAccess:
+    Type: String
+  VpcPeerCidrForSshAccess:
+    Type: String
+  IsPublicSubnet:
+    Type: String
+    Default: "true"
+    AllowedValues: ["true", "false"]
+
+Conditions:
+  IsAPublicSubnet: !Equals [!Ref IsPublicSubnet, "true"]
+  
+Resources:
+  InstanceAccess:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      CidrIp: !Ref CidrIpForSshAccess
+      Description: ssh access
+      FromPort: 22
+      ToPort: 22
+      IpProtocol: tcp
+      GroupId: !Ref SecurityGroupId
+  
+  InstanceAccessFromVpcPeerSubnet:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      CidrIp: !Ref VpcPeerCidrForSshAccess
+      Description: ssh access from vpc peer
+      FromPort: 22
+      ToPort: 22
+      IpProtocol: tcp
+      GroupId: !Ref SecurityGroupId
+
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties: 
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SecurityGroupIds: 
+        - !Ref SecurityGroupId
+      SubnetId: !Ref SubnetId
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref InstanceName, !Ref Environment]]
+
+Outputs:
+  Id:
+    Value: !Ref Instance
+  PublicIp:
+    Condition: IsAPublicSubnet
+    Value: !GetAtt Instance.PublicIp
+  PrivateIp:
+    Value: !GetAtt Instance.PrivateIp

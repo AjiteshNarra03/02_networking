@@ -1,0 +1,8 @@
+template_path: s3/bucket.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  BucketName: "bce-sceptre-basics-bucket"
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

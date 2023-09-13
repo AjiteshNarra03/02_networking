@@ -1,0 +1,9 @@
+template_path: vpc/nat-gateway.yaml
+parameters:
+  Environment: {{ stack_group_config.Environment }}
+  NatGatewayName: 'bce-training-ajit-vpc-nat-gateway'
+  PublicSubnetId: !stack_output bizmaster/vpc/public-subnet-a.yaml::Id
+stack_tags:
+  "Environment": {{ stack_group_config.Environment }}
+  "CreatedBy": {{ stack_group_config.CreatedBy }}
+  "Application": {{ stack_group_config.Application }}

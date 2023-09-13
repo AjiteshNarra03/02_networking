@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Creates a VPC Peering Connection between 2 VPCs
+
+Parameters:
+  Environment:
+    Type: String
+  PeeringConnectionName:
+    Type: String
+  PeerAccountId:
+    Type: String
+  PeerRoleArn:
+    Type: String
+  PeerVpcId:
+    Type: String
+  VpcId:
+    Type: String
+
+Resources:
+  PeeringConnection:
+    Type: AWS::EC2::VPCPeeringConnection
+    Properties:
+      PeerOwnerId: !Ref PeerAccountId
+      PeerRoleArn: !Ref PeerRoleArn
+      PeerVpcId: !Ref PeerVpcId
+      VpcId: !Ref VpcId
+      Tags: 
+        - 
+          Key: Name
+          Value: !Join ['-', [!Ref PeeringConnectionName, !Ref Environment]]
+
+Outputs:
+  Id:
+    Value: !Ref PeeringConnection
